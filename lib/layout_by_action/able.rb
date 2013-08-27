@@ -3,7 +3,9 @@ module LayoutByAction
     extend ActiveSupport::Concern
 
     def layout_by_action(action_name=params[:action])
-      self.class.layouts[action_name] || super || self.class.default_layout
+      self.class.layouts.fetch(action_name) do
+        self.class.default_layout
+      end
     end
 
     module ClassMethods
