@@ -3,10 +3,15 @@ require "spec_helper"
 # stand ins for Rails application controller
 # it is extended by the railtie
 
-class ApplicationController
+class ActionController
+  class Base; end
+end
+
+class ApplicationController < ActionController::Base
   include LayoutByAction::Able
   def self.layout(method); end
 end
+
 
 class YourController < ApplicationController; end
 

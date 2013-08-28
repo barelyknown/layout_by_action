@@ -3,9 +3,7 @@ module LayoutByAction
     extend ActiveSupport::Concern
 
     def layout_by_action(action_name=params[:action])
-      self.class.layouts.fetch(action_name) do
-        self.class.default_layout
-      end
+      self.class.layout_heirarchy(action_name).first
     end
 
     module ClassMethods
@@ -30,6 +28,16 @@ module LayoutByAction
           end
         end
         layout :layout_by_action
+      end
+
+      def layout_heirarchy(action_name)
+        ancestors.grep(Class).select do |klass|
+          klass.ancestors.grep(Class).include?(ActionController::Base)
+        end.select do |klass|
+          klass != ActionController::Base
+        end.collect do |klass|
+          klass.layouts[action_name] || klass.default_layout
+        end.compact
       end
     end
 
